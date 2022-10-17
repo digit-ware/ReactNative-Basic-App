@@ -11,21 +11,14 @@
 import React, {type PropsWithChildren} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   useColorScheme,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import ScrollViewExample from './ScrollViewExample';
 import SomeStyles from './SomeStyles/SomeStyles';
 
 const Section: React.FC<
@@ -67,13 +60,7 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-
-        <SomeStyles />
-      </ScrollView>
+      <ScrollViewExample />
     </SafeAreaView>
   );
 };
