@@ -18,8 +18,7 @@ import {
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import ScrollViewExample from './ScrollViewExample';
-import SomeStyles from './SomeStyles/SomeStyles';
+import FlatListExample from './FlatListExample';
 
 const Section: React.FC<
   PropsWithChildren<{
@@ -60,7 +59,7 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <ScrollViewExample />
+      <FlatListExample />
     </SafeAreaView>
   );
 };
