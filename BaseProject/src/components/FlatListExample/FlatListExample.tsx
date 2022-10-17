@@ -17,19 +17,27 @@ const DATA = [
   },
   {
     id: '4',
-    title: 'Fourth Item',
+    title: 'Fourth Item 4',
   },
   {
     id: '5',
-    title: 'Lorem Ipsum',
+    title: 'Lorem Ipsum 5',
   },
   {
     id: '6',
-    title: 'Lorem Ipsum',
+    title: 'Lorem Ipsum 6',
   },
   {
     id: '7',
-    title: 'Lorem Ipsum',
+    title: 'Lorem Ipsum 7',
+  },
+  {
+    id: '8',
+    title: 'Lorem Ipsum 8',
+  },
+  {
+    id: '9',
+    title: 'Lorem Ipsum 9',
   },
 ];
 
@@ -38,6 +46,7 @@ const FlatListExample = () => {
 
   return (
     <FlatList
+      contentContainerStyle={{flexGrow: 1}}
       data={DATA}
       renderItem={renderItem}
       keyExtractor={item => item.id}
