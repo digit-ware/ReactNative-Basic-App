@@ -9,7 +9,7 @@
  */
 
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, SafeAreaView, ScrollView, StatusBar, View} from 'react-native';
+import {Button, SafeAreaView, ScrollView, StatusBar, Text, View} from 'react-native';
 
 import {statusBar, styles} from './styles';
 
@@ -51,9 +51,11 @@ export const _ModalScreen = ({navigation, route}: Props) => {
         contentInsetAdjustmentBehavior="automatic"
         style={styles.backgroundStyle}>
         <View style={styles.body}>
+          <Text>HEADER</Text>
           <View style={styles.body}>
             {(() => {
               switch (modalIndex) {
+                case 0:
                 case 1:
                 case 2:
                   return (
@@ -67,6 +69,7 @@ export const _ModalScreen = ({navigation, route}: Props) => {
               }
             })()}
           </View>
+          <Text>FOOTER</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
