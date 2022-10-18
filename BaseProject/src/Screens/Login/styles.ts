@@ -26,4 +26,7 @@ export const styles = StyleSheet.create({
   inputText: {
     fontSize: 21,
   } as TextStyle,
+  spacer: {
+    height: 16,
+  } as ViewStyle
 });

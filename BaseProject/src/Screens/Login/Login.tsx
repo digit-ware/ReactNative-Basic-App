@@ -19,6 +19,8 @@ import {
   View,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import {Header} from 'react-native/Libraries/NewAppScreen';
 
@@ -28,12 +30,18 @@ interface Props {
   navigation: any;
 }
 
+const validationSchema = yup.object().shape({
+  username: yup.string().required('Required'),
+  password: yup.string().min(8, 'At least 8 characters').required('Required'),
+});
+
 export const LoginScreen = ({navigation}: Props) => {
   const {
     control,
     handleSubmit,
     formState: {errors},
   } = useForm({
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       username: '',
       password: '',
@@ -75,7 +83,8 @@ export const LoginScreen = ({navigation}: Props) => {
               )}
               name="username"
             />
-            <Text>{errors.username ? 'This is required.' : ''}</Text>
+            <Text>{errors.username?.message}</Text>
+            <View style={styles.spacer} />
 
             <Controller
               control={control}
@@ -96,7 +105,8 @@ export const LoginScreen = ({navigation}: Props) => {
               )}
               name="password"
             />
-            <Text>{errors.password ? 'Min length is 8.' : ''}</Text>
+            <Text>{errors.password?.message}</Text>
+            <View style={styles.spacer} />
 
             <Button title="Submit" onPress={handleSubmit(onSubmit)} />
           </View>
