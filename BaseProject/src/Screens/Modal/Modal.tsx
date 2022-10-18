@@ -24,34 +24,22 @@ interface Props {
   };
 }
 
-const _MemoButtonIndex = (props: any) => {
-  console.log('_MemoButtonIndex');
-  return <Button {...props} />;
-};
-export const MemoButtonIndex = React.memo(_MemoButtonIndex);
-
-const _MemoButtonBool = (props: any) => {
-  console.log('_MemoButtonBool');
-  return <Button {...props} />;
-};
-const MemoButtonBool = React.memo(_MemoButtonBool);
-
-
-
-export const ModalScreen = ({navigation, route}: Props) => {
+export const _ModalScreen = ({navigation, route}: Props) => {
   const modalIndex = route?.params?.modalIndex ?? 0;
   console.log(modalIndex);
 
-  const [stateIndex, setStateIndex] = useState<number>(0);
-  const [stateBool, setStateBool] = useState<boolean>(false);
-
-  const onModalIndexPress = useCallback(() => {
-    setStateIndex(stateIndex + 1);
-  }, [stateIndex]);
-
-  const onModalBoolPress = () => {
-    setStateBool(!stateBool);
-  };
+  const onModalPress = useCallback(() => {
+    if (modalIndex >= 3) {
+      navigation.popToTop();
+      navigation.navigate('HomeTabNavigator');
+      return;
+    }
+    // ref actions -> https://reactnavigation.org/docs/navigation-prop/
+    const params: ModalScreenRouteParams = {
+      modalIndex: modalIndex + 1,
+    };
+    navigation.push('MyModal', params);
+  }, [navigation, modalIndex]);
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
@@ -64,13 +52,9 @@ export const ModalScreen = ({navigation, route}: Props) => {
         style={styles.backgroundStyle}>
         <View style={styles.body}>
           <View style={styles.body}>
-            <MemoButtonIndex
-              title={`Modal Index ${stateIndex}`}
-              onPress={onModalIndexPress}
-            />
-            <MemoButtonBool
-              title={`Modal Bool ${JSON.stringify(stateBool)}`}
-              onPress={onModalBoolPress}
+            <Button
+              title={`Present Modal ${modalIndex}`}
+              onPress={onModalPress}
             />
           </View>
         </View>
@@ -78,3 +62,5 @@ export const ModalScreen = ({navigation, route}: Props) => {
     </SafeAreaView>
   );
 };
+
+export const ModalScreen = React.memo(_ModalScreen);
