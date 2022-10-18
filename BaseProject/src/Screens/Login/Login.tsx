@@ -8,7 +8,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -31,27 +31,32 @@ interface Props {
 }
 
 const validationSchema = yup.object().shape({
-  username: yup.string().required('Required'),
+  username: yup.string().required('Required field'),
   password: yup.string().min(8, 'At least 8 characters').required('Required'),
 });
 
 export const LoginScreen = ({navigation}: Props) => {
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-  } = useForm({
+  const useFormValue = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       username: '',
       password: '',
     },
   });
-  const onSubmit = (data: any) => {
+
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useFormValue;
+
+  const onSubmit = async (data: any) => {
     console.log(data);
     navigation.navigate('HomeTabNavigator');
   };
-  console.log(errors);
+  const handleFormSubmit = handleSubmit(onSubmit);
+
+  console.log('errors', errors);
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
@@ -108,7 +113,7 @@ export const LoginScreen = ({navigation}: Props) => {
             <Text>{errors.password?.message}</Text>
             <View style={styles.spacer} />
 
-            <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+            <Button title="Submit" onPress={handleFormSubmit} />
           </View>
         </View>
       </ScrollView>

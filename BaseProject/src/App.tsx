@@ -16,6 +16,7 @@ import {Text} from 'react-native';
 import HomeScreen from './Screens/Home';
 import LoginScreen from './Screens/Login';
 import SettingsScreen from './Screens/Settings';
+import ModalScreen from './Screens/Modal';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +51,12 @@ const Stack = createStackNavigator();
 const MainStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Group>
+      <Stack.Group
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: 'rgb(197, 43, 123)',
+          },
+        }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen
           name="HomeTabNavigator"
@@ -60,8 +66,8 @@ const MainStack = () => {
           }}
         />
       </Stack.Group>
-      <Stack.Group screenOptions={{presentation: 'modal'}}>
-        <Stack.Screen name="MyModal" component={SettingsScreen} />
+      <Stack.Group>
+        <Stack.Screen name="MyModal" component={ModalScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );

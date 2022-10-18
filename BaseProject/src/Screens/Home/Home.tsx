@@ -17,6 +17,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import {ModalScreenRouteParams} from '../Modal';
 
 import {statusBar, styles} from './styles';
 
@@ -26,7 +27,10 @@ interface Props {
 
 export const HomeScreen = ({navigation}: Props) => {
   const presentAModal = useCallback(() => {
-    navigation.navigate('MyModal');
+    const params: ModalScreenRouteParams = {
+      modalIndex: 0,
+    };
+    navigation.navigate('MyModal', params);
   }, [navigation]);
 
   return (
