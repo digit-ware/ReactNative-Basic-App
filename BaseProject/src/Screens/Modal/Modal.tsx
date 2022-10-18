@@ -52,10 +52,20 @@ export const _ModalScreen = ({navigation, route}: Props) => {
         style={styles.backgroundStyle}>
         <View style={styles.body}>
           <View style={styles.body}>
-            <Button
-              title={`Present Modal ${modalIndex}`}
-              onPress={onModalPress}
-            />
+            {(() => {
+              switch (modalIndex) {
+                case 1:
+                case 2:
+                  return (
+                    <Button
+                      title={`Present Modal ${modalIndex}`}
+                      onPress={onModalPress}
+                    />
+                  );
+                default:
+                  return <Button title={'Last Modal'} onPress={onModalPress} />;
+              }
+            })()}
           </View>
         </View>
       </ScrollView>
