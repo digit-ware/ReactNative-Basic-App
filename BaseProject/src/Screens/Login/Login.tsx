@@ -28,6 +28,7 @@ import {statusBar, styles} from './styles';
 import {useDispatch, useSelector} from 'react-redux';
 import * as appActions from '../../store/app/actions';
 import * as appSelector from '../../store/app/selectors';
+import {UserLoginRequest} from '../../store/app/types';
 
 interface Props {
   navigation: any;
@@ -42,7 +43,7 @@ export const LoginScreen = ({navigation}: Props) => {
   const dispatch = useDispatch();
   const lastError = useSelector(appSelector.lastErrorSelector);
 
-  const useFormValue = useForm({
+  const useFormValue = useForm<UserLoginRequest>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       username: '',
@@ -63,24 +64,8 @@ export const LoginScreen = ({navigation}: Props) => {
     }
   }, [setError, lastError]);
 
-  const onSubmit = async (data: any) => {
-    dispatch(appActions.clearError({comment: 'login submitted'}));
-    console.log(data);
-
-    const result = await fetch('https://random-data-api.com/api/v2/users');
-    if (true) {
-      navigation.navigate('HomeTabNavigator');
-      const user = await result.json();
-      dispatch(
-        appActions.loginSucceeded({
-          username: user.username,
-          token: user.uid,
-        }),
-      );
-    }
-    if (false) {
-      dispatch(appActions.loginFailed({message: 'Login Failed'}));
-    }
+  const onSubmit = (data: UserLoginRequest) => {
+    dispatch(appActions.loginRequested(data));
   };
   const handleFormSubmit = handleSubmit(onSubmit);
 
