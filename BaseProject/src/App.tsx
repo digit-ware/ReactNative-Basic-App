@@ -17,6 +17,8 @@ import HomeScreen from './Screens/Home';
 import LoginScreen from './Screens/Login';
 import SettingsScreen from './Screens/Settings';
 import ModalScreen from './Screens/Modal';
+import {Provider} from 'react-redux';
+import configureStore from './store';
 
 const Tab = createBottomTabNavigator();
 
@@ -73,11 +75,15 @@ const MainStack = () => {
   );
 };
 
+const store = configureStore();
+
 const App = () => {
   return (
-    <NavigationContainer>
-      <MainStack />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <MainStack />
+      </NavigationContainer>
+    </Provider>
   );
 };
 

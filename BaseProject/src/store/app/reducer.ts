@@ -20,7 +20,7 @@ export default (
   state: AppState = initialState,
   action: FluxStandardAction<unknown>,
 ) => {
-  produce(state, draft => {
+  return produce(state, draft => {
     switch (action.type) {
       case K.LOGIN_REQUESTED:
         draft.userInfo = action.payload as UserLoginResponse;
