@@ -1,5 +1,5 @@
 import {call, cancelled, put, takeLatest} from 'redux-saga/effects';
-import {FluxStandardAction} from '../../types';
+import {AppError, FluxStandardAction} from '../../types';
 import * as actions from './actions';
 import * as K from './constants';
 import {UserLoginRequest, UserLoginResponse} from './types';
@@ -18,7 +18,7 @@ export function* loginRequested(action: FluxStandardAction<UserLoginRequest>) {
     });
     yield put(actions.loginSucceeded(result));
   } catch (error) {
-    yield put(actions.loginFailed(error as Error));
+    yield put(actions.loginFailed(error as AppError));
   } finally {
     if ((yield cancelled()) as boolean) {
       yield put(actions.loginCancelled());
@@ -26,7 +26,7 @@ export function* loginRequested(action: FluxStandardAction<UserLoginRequest>) {
   }
 }
 
-export function* handleErrors(action: FluxStandardAction<Error>) {
+export function* handleErrors(action: FluxStandardAction<AppError>) {
   const error = action.payload;
   console.error(error.stack);
 }

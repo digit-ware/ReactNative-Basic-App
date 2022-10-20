@@ -3,6 +3,7 @@ export interface UserLoginRequest {
   password: string;
 }
 
-export interface UserLoginResponse extends UserLoginRequest {
+export interface UserLoginResponse {
+  username: string;
   token: string;
 }

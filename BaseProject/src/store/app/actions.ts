@@ -1,3 +1,4 @@
+import {AppError} from '../../types';
 import * as K from './constants';
 import {UserLoginRequest, UserLoginResponse} from './types';
 
@@ -12,7 +13,7 @@ export const clearError = (meta?: any) => ({
 /**
  * Programmatically set errore on the store
  */
-export const setError = (payload: Error, meta?: any) => ({
+export const setError = (payload: AppError, meta?: any) => ({
   type: K.SET_ERROR,
   payload,
   meta,
@@ -48,7 +49,7 @@ export const loginSucceeded = (payload: UserLoginResponse, meta?: any) => ({
 //   };
 // };
 
-export const loginFailed = (payload: Error, meta?: any) => ({
+export const loginFailed = (payload: AppError, meta?: any) => ({
   type: K.LOGIN_FAILED,
   payload,
   meta,

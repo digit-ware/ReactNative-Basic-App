@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -25,6 +25,9 @@ import * as yup from 'yup';
 import {Header} from 'react-native/Libraries/NewAppScreen';
 
 import {statusBar, styles} from './styles';
+import {useDispatch, useSelector} from 'react-redux';
+import * as appActions from '../../store/app/actions';
+import * as appSelector from '../../store/app/selectors';
 
 interface Props {
   navigation: any;
@@ -36,6 +39,9 @@ const validationSchema = yup.object().shape({
 });
 
 export const LoginScreen = ({navigation}: Props) => {
+  const dispatch = useDispatch();
+  const lastError = useSelector(appSelector.lastErrorSelector);
+
   const useFormValue = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -48,11 +54,33 @@ export const LoginScreen = ({navigation}: Props) => {
     control,
     handleSubmit,
     formState: {errors},
+    setError,
   } = useFormValue;
 
+  useEffect(() => {
+    if (lastError !== null) {
+      setError('username', lastError);
+    }
+  }, [setError, lastError]);
+
   const onSubmit = async (data: any) => {
+    dispatch(appActions.clearError({comment: 'login submitted'}));
     console.log(data);
-    navigation.navigate('HomeTabNavigator');
+
+    const result = await fetch('https://random-data-api.com/api/v2/users');
+    if (true) {
+      navigation.navigate('HomeTabNavigator');
+      const user = await result.json();
+      dispatch(
+        appActions.loginSucceeded({
+          username: user.username,
+          token: user.uid,
+        }),
+      );
+    }
+    if (false) {
+      dispatch(appActions.loginFailed({message: 'Login Failed'}));
+    }
   };
   const handleFormSubmit = handleSubmit(onSubmit);
 

@@ -4,3 +4,8 @@ export interface FluxStandardAction<Payload, Type = string> {
   error?: boolean;
   meta?: Object;
 }
+
+export interface AppError {
+  message: string;
+  stack: string;
+}
