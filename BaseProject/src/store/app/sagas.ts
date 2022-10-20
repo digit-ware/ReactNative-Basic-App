@@ -1,12 +1,29 @@
-import {takeLatest} from 'redux-saga/effects';
+import {call, cancelled, put, takeLatest} from 'redux-saga/effects';
 import {FluxStandardAction} from '../../types';
+import * as actions from './actions';
 import * as K from './constants';
-import {UserLoginRequest} from './types';
+import {UserLoginRequest, UserLoginResponse} from './types';
 
 export function* loginRequested(action: FluxStandardAction<UserLoginRequest>) {
-  console.log(action);
-  return;
-  // yield put(actions.loadAppRequested())
+  try {
+    const result: UserLoginResponse = yield call(async () => {
+      const fetchResult = await fetch('...../login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(action.payload),
+      });
+      return (await fetchResult.json()) as UserLoginResponse;
+    });
+    yield put(actions.loginSucceeded(result));
+  } catch (error) {
+    yield put(actions.loginFailed(error as Error));
+  } finally {
+    if ((yield cancelled()) as boolean) {
+      yield put(actions.loginCancelled());
+    }
+  }
 }
 
 export function* handleErrors(action: FluxStandardAction<Error>) {

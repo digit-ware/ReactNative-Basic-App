@@ -31,6 +31,23 @@ export const loginSucceeded = (payload: UserLoginResponse, meta?: any) => ({
   meta,
 });
 
+// export const doSucceeded = (payload: UserLoginResponse, meta?: any) => {
+//   return async function (dispatch) {
+//     const result = await fetch('...../login', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload),
+//     });
+//     dispatch({
+//       type: K.LOGIN_SUCCEEDED,
+//       payload: (await result.json()) as UserLoginResponse,
+//       meta,
+//     });
+//   };
+// };
+
 export const loginFailed = (payload: Error, meta?: any) => ({
   type: K.LOGIN_FAILED,
   payload,
