@@ -19,6 +19,7 @@ import SettingsScreen from './Screens/Settings';
 import ModalScreen from './Screens/Modal';
 import {Provider} from 'react-redux';
 import configureStore from './store';
+import * as navigationService from './navigationService';
 
 const Tab = createBottomTabNavigator();
 
@@ -80,7 +81,7 @@ const store = configureStore();
 const App = () => {
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigator => navigationService.init(navigator)}>
         <MainStack />
       </NavigationContainer>
     </Provider>
