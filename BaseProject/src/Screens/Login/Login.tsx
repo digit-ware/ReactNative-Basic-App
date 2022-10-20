@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useCallback, useContext} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -25,6 +25,7 @@ import * as yup from 'yup';
 import {Header} from 'react-native/Libraries/NewAppScreen';
 
 import {statusBar, styles} from './styles';
+import {darkTheme, lightTheme, ThemeContext} from '../../context';
 
 interface Props {
   navigation: any;
@@ -58,6 +59,19 @@ export const LoginScreen = ({navigation}: Props) => {
 
   console.log('errors', errors);
 
+  const theme = useContext(ThemeContext);
+
+  const onToggleDarkMode = useCallback(() => {
+    if (!theme.setTheme) {
+      return;
+    }
+    if (theme.type === 'dark') {
+      theme.setTheme(lightTheme);
+    } else {
+      theme.setTheme(darkTheme);
+    }
+  }, [theme]);
+
   return (
     <SafeAreaView style={styles.backgroundStyle}>
       <StatusBar
@@ -70,6 +84,8 @@ export const LoginScreen = ({navigation}: Props) => {
         <Header />
         <View style={styles.body}>
           <View>
+            <Text>{JSON.stringify(theme.type)}</Text>
+            <Button title="Toggle Dark Mode" onPress={onToggleDarkMode} />
             <Controller
               control={control}
               rules={{

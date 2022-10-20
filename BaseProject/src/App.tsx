@@ -11,7 +11,7 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import React from 'react';
+import React, {useState} from 'react';
 import {Text} from 'react-native';
 import HomeScreen from './Screens/Home';
 import LoginScreen from './Screens/Login';
@@ -20,6 +20,7 @@ import ModalScreen from './Screens/Modal';
 import {Provider} from 'react-redux';
 import configureStore from './store';
 import * as navigationService from './navigationService';
+import {darkTheme, Theme, ThemeContext} from './context';
 
 const Tab = createBottomTabNavigator();
 
@@ -79,11 +80,17 @@ const MainStack = () => {
 const store = configureStore();
 
 const App = () => {
+  const [theme, setTheme] = useState<Theme>(darkTheme);
+  theme.setTheme = setTheme;
+
   return (
     <Provider store={store}>
-      <NavigationContainer ref={navigator => navigationService.init(navigator)}>
-        <MainStack />
-      </NavigationContainer>
+      <ThemeContext.Provider value={theme}>
+        <NavigationContainer
+          ref={navigator => navigationService.init(navigator)}>
+          <MainStack />
+        </NavigationContainer>
+      </ThemeContext.Provider>
     </Provider>
   );
 };
