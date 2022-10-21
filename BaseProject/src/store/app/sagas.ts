@@ -1,9 +1,17 @@
 import {call, cancelled, put, takeLatest} from 'redux-saga/effects';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as navigationService from '../../navigationService';
 import {AppError, FluxStandardAction} from '../../types';
 import * as actions from './actions';
 import * as K from './constants';
 import {UserLoginRequest, UserLoginResponse} from './types';
+
+const CONTATORI_KEY = '';
+
+interface Contatore {
+  id: string;
+  consumption: number;
+}
 
 export function* loginRequested(action: FluxStandardAction<UserLoginRequest>) {
   try {
@@ -46,6 +54,27 @@ export function* loginSucceeded(action: FluxStandardAction<UserLoginResponse>) {
   }
 }
 
+export function* bootstrap() {
+  try {
+    navigationService.navigate('HomeTabNavigator');
+
+    const contatori: Array<Contatore> | null = yield call(async () => {
+      const jsonResult = await AsyncStorage.getItem(CONTATORI_KEY);
+      return jsonResult === null
+        ? jsonResult
+        : (JSON.parse(jsonResult) as Array<Contatore>);
+    });
+    console.log(contatori);
+  } catch (error) {
+    navigationService.navigate('GlobalError');
+  } finally {
+    if ((yield cancelled()) as boolean) {
+      console.log('loginSucceeded cancelled');
+      navigationService.navigate('GlobalError');
+    }
+  }
+}
+
 export function* handleErrors(action: FluxStandardAction<AppError>) {
   const error = action.payload;
   console.error(error.stack);
@@ -54,9 +83,10 @@ export function* handleErrors(action: FluxStandardAction<AppError>) {
 function* watchApp() {
   yield takeLatest(K.LOGIN_REQUESTED, loginRequested);
   yield takeLatest(K.LOGIN_SUCCEEDED, loginSucceeded);
+  yield takeLatest(K.BOOTSTRAP, bootstrap);
 
   /* autonomous starting actions */
-  // yield put(actions.loadAppRequested())
+  yield put(actions.bootstrap());
 }
 
 export default watchApp;

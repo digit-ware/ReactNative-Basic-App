@@ -20,6 +20,11 @@ export const setError = (payload: AppError, meta?: any) => ({
   error: true,
 });
 
+export const bootstrap = (meta?: any) => ({
+  type: K.BOOTSTRAP,
+  meta,
+});
+
 export const loginRequested = (payload: UserLoginRequest, meta?: any) => ({
   type: K.LOGIN_REQUESTED,
   payload,
