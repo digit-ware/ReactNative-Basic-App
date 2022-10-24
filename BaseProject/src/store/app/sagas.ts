@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as navigationService from '../../services/navigationService';
 import {AppError, FluxStandardAction} from '../../types';
 import * as actions from './actions';
+import * as chartActions from '../charts/actions';
 import * as K from './constants';
 import {RememberMe, UserLoginRequest, UserLoginResponse} from './types';
 import * as userApi from '../../api/user';
@@ -63,6 +64,7 @@ export function* loginSucceeded(
         );
       });
     }
+    yield put(chartActions.loadDataRequested({comment: 'from loginSucceeded'}));
     navigationService.navigate('HomeTabNavigator');
   } catch (error) {
     console.log('loginSucceeded', error);
@@ -93,6 +95,7 @@ export function* bootstrap() {
           ? jsonResult
           : (JSON.parse(jsonResult) as Array<Contatore>);
       });
+      yield put(chartActions.loadDataRequested({comment: 'from bootsrap'}));
       console.log(contatori);
     }
   } catch (error) {

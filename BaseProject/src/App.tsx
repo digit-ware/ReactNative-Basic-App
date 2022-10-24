@@ -15,6 +15,7 @@ import React from 'react';
 import {Text} from 'react-native';
 import {Provider} from 'react-redux';
 import {SigninScreen} from './Screens/Signin/Signin';
+import ChartsScreen from './Screens/Charts';
 import HomeScreen from './Screens/Home';
 import LoginScreen from './Screens/Login';
 import ModalScreen from './Screens/Modal';
@@ -39,13 +40,48 @@ function HomeTabs() {
                   fontSize: size,
                   fontWeight: focused ? 'bold' : 'normal',
                 }}>
-                H
+                🏠
               </Text>
             );
           },
         }}
       />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen
+        name="Chart"
+        component={ChartsScreen}
+        options={{
+          tabBarIcon: ({focused, color, size}) => {
+            return (
+              <Text
+                style={{
+                  color,
+                  fontSize: size,
+                  fontWeight: focused ? 'bold' : 'normal',
+                }}>
+                📊
+              </Text>
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarIcon: ({focused, color, size}) => {
+            return (
+              <Text
+                style={{
+                  color,
+                  fontSize: size,
+                  fontWeight: focused ? 'bold' : 'normal',
+                }}>
+                ⚙️
+              </Text>
+            );
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 }
