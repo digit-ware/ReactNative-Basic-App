@@ -1,6 +1,12 @@
 import {AppError} from '../../types';
 import * as K from './constants';
-import {UserLoginRequest, UserLoginResponse} from './types';
+import {
+  RememberMe,
+  UserLoginRequest,
+  UserLoginResponse,
+  UserSigninRequest,
+  UserSigninResponse,
+} from './types';
 
 /**
  * Dismiss all errors from the store
@@ -25,34 +31,23 @@ export const bootstrap = (meta?: any) => ({
   meta,
 });
 
-export const loginRequested = (payload: UserLoginRequest, meta?: any) => ({
+export const loginRequested = <MType>(
+  payload: UserLoginRequest,
+  meta: MType & RememberMe,
+) => ({
   type: K.LOGIN_REQUESTED,
   payload,
   meta,
 });
 
-export const loginSucceeded = (payload: UserLoginResponse, meta?: any) => ({
+export const loginSucceeded = <MType>(
+  payload: UserLoginResponse,
+  meta: MType & RememberMe,
+) => ({
   type: K.LOGIN_SUCCEEDED,
   payload,
   meta,
 });
-
-// export const doSucceeded = (payload: UserLoginResponse, meta?: any) => {
-//   return async function (dispatch) {
-//     const result = await fetch('...../login', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(payload),
-//     });
-//     dispatch({
-//       type: K.LOGIN_SUCCEEDED,
-//       payload: (await result.json()) as UserLoginResponse,
-//       meta,
-//     });
-//   };
-// };
 
 export const loginFailed = (payload: AppError, meta?: any) => ({
   type: K.LOGIN_FAILED,
@@ -63,5 +58,51 @@ export const loginFailed = (payload: AppError, meta?: any) => ({
 
 export const loginCancelled = (meta?: any) => ({
   type: K.LOGIN_CANCELLED,
+  meta,
+});
+
+export const logoutRequested = (meta?: any) => ({
+  type: K.LOGOUT_REQUESTED,
+  meta,
+});
+
+export const logoutSucceeded = (meta?: any) => ({
+  type: K.LOGOUT_SUCCEEDED,
+  meta,
+});
+
+export const logoutFailed = (payload: AppError, meta?: any) => ({
+  type: K.LOGOUT_FAILED,
+  payload,
+  meta,
+  error: true,
+});
+
+export const logoutCancelled = (meta?: any) => ({
+  type: K.LOGOUT_CANCELLED,
+  meta,
+});
+
+export const signinRequested = (payload: UserSigninRequest, meta?: any) => ({
+  type: K.SIGNIN_REQUESTED,
+  payload,
+  meta,
+});
+
+export const signinSucceeded = (payload: UserSigninResponse, meta?: any) => ({
+  type: K.SIGNIN_SUCCEEDED,
+  payload,
+  meta,
+});
+
+export const signinFailed = (payload: AppError, meta?: any) => ({
+  type: K.SIGNIN_FAILED,
+  payload,
+  meta,
+  error: true,
+});
+
+export const signinCancelled = (meta?: any) => ({
+  type: K.SIGNIN_CANCELLED,
   meta,
 });

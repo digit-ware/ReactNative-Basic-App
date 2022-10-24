@@ -1,11 +1,13 @@
 import {call, cancelled, put, takeLatest} from 'redux-saga/effects';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as navigationService from '../../navigationService';
+import * as navigationService from '../../services/navigationService';
 import {AppError, FluxStandardAction} from '../../types';
 import * as actions from './actions';
 import * as K from './constants';
-import {UserLoginRequest, UserLoginResponse} from './types';
+import {RememberMe, UserLoginRequest, UserLoginResponse} from './types';
+import * as userApi from '../../api/user';
 
+const USER_LOGIN_STORAGE_KEY = 'USER_LOGIN';
 const CONTATORI_KEY = '';
 
 interface Contatore {
@@ -13,26 +15,28 @@ interface Contatore {
   consumption: number;
 }
 
-export function* loginRequested(action: FluxStandardAction<UserLoginRequest>) {
+export function* loginRequested({
+  payload,
+  meta,
+}: FluxStandardAction<UserLoginRequest, RememberMe>) {
   try {
-    console.log('loginRequested', action);
+    console.log('loginRequested', payload.username);
+    const {rememberMe} = meta!;
+    if (!rememberMe) {
+      yield call(() => AsyncStorage.removeItem(USER_LOGIN_STORAGE_KEY));
+    }
     yield put(actions.clearError({comment: 'login submitted'}));
-    const result: Response = yield call(async () => {
-      return fetch('https://random-data-api.com/api/v2/users');
-    });
+    const user: userApi.User = yield call(userApi.getUser);
 
-    if (result.status === 200) {
-      const user = yield call(() => result.json());
-      yield put(
-        actions.loginSucceeded({
+    yield put(
+      actions.loginSucceeded(
+        {
           username: user.username,
-          token: user.uid,
-        }),
-      );
-    }
-    if (result.status >= 400) {
-      throw new Error('Login Failed');
-    }
+          token: user.token,
+        },
+        {rememberMe},
+      ),
+    );
   } catch (error) {
     yield put(actions.loginFailed(error as AppError));
   } finally {
@@ -42,8 +46,23 @@ export function* loginRequested(action: FluxStandardAction<UserLoginRequest>) {
   }
 }
 
-export function* loginSucceeded(action: FluxStandardAction<UserLoginResponse>) {
+export function* loginSucceeded(
+  action: FluxStandardAction<UserLoginResponse, RememberMe>,
+) {
   try {
+    console.log(action);
+    if (action.meta?.rememberMe) {
+      yield call(async () => {
+        const userLoginStoredInfo: UserLoginResponse = {
+          username: action.payload.username,
+          token: action.payload.token,
+        };
+        await AsyncStorage.setItem(
+          USER_LOGIN_STORAGE_KEY,
+          JSON.stringify(userLoginStoredInfo),
+        );
+      });
+    }
     navigationService.navigate('HomeTabNavigator');
   } catch (error) {
     console.log('loginSucceeded', error);
@@ -56,21 +75,46 @@ export function* loginSucceeded(action: FluxStandardAction<UserLoginResponse>) {
 
 export function* bootstrap() {
   try {
-    navigationService.navigate('HomeTabNavigator');
+    const userLoginStoredInfo: UserLoginResponse | null = yield call(
+      async () => {
+        const storedJSON = await AsyncStorage.getItem(USER_LOGIN_STORAGE_KEY);
+        if (storedJSON !== null) {
+          return JSON.parse(storedJSON);
+        }
+        return null;
+      },
+    );
+    if (userLoginStoredInfo) {
+      navigationService.navigate('HomeTabNavigator');
 
-    const contatori: Array<Contatore> | null = yield call(async () => {
-      const jsonResult = await AsyncStorage.getItem(CONTATORI_KEY);
-      return jsonResult === null
-        ? jsonResult
-        : (JSON.parse(jsonResult) as Array<Contatore>);
-    });
-    console.log(contatori);
+      const contatori: Array<Contatore> | null = yield call(async () => {
+        const jsonResult = await AsyncStorage.getItem(CONTATORI_KEY);
+        return jsonResult === null
+          ? jsonResult
+          : (JSON.parse(jsonResult) as Array<Contatore>);
+      });
+      console.log(contatori);
+    }
   } catch (error) {
     navigationService.navigate('GlobalError');
   } finally {
     if ((yield cancelled()) as boolean) {
       console.log('loginSucceeded cancelled');
       navigationService.navigate('GlobalError');
+    }
+  }
+}
+
+export function* logoutRequested() {
+  try {
+    yield call(() => AsyncStorage.removeItem(USER_LOGIN_STORAGE_KEY));
+    navigationService.goTo('Login');
+    yield put(actions.logoutSucceeded());
+  } catch (error) {
+    yield put(actions.logoutFailed(error as AppError));
+  } finally {
+    if ((yield cancelled()) as boolean) {
+      put(actions.logoutCancelled());
     }
   }
 }
@@ -83,6 +127,7 @@ export function* handleErrors(action: FluxStandardAction<AppError>) {
 function* watchApp() {
   yield takeLatest(K.LOGIN_REQUESTED, loginRequested);
   yield takeLatest(K.LOGIN_SUCCEEDED, loginSucceeded);
+  yield takeLatest(K.LOGOUT_REQUESTED, logoutRequested);
   yield takeLatest(K.BOOTSTRAP, bootstrap);
 
   /* autonomous starting actions */

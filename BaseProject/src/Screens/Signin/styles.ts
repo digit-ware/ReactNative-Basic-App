@@ -7,12 +7,12 @@ export const statusBar = {
 };
 
 export const styles = StyleSheet.create({
-  rowStretched: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  } as ViewStyle,
   backgroundStyle: {
-    backgroundColor: Colors.lighter,
+    backgroundColor: '#FFFFFF',
+  } as ViewStyle,
+  scrollView: {
+    backgroundColor: '#FFFFFF',
+    height: '100%',
   } as ViewStyle,
   body: {
     backgroundColor: '#FFFFFF',
@@ -32,11 +32,5 @@ export const styles = StyleSheet.create({
   } as TextStyle,
   spacer: {
     height: 16,
-  } as ViewStyle,
-  hr: {
-    width: '100%',
-    borderColor: '#000',
-    borderBottomWidth: 1,
-    marginVertical: 16,
   } as ViewStyle,
 });

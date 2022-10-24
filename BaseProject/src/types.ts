@@ -1,8 +1,8 @@
-export interface FluxStandardAction<Payload, Type = string> {
+export interface FluxStandardAction<Payload, Meta = Object, Type = string> {
   type: Type;
   payload: Payload;
   error?: boolean;
-  meta?: Object;
+  meta?: Meta;
 }
 
 export interface AppError {

@@ -13,13 +13,14 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
 import {Text} from 'react-native';
+import {Provider} from 'react-redux';
+import {SigninScreen} from './Screens/Signin/Signin';
 import HomeScreen from './Screens/Home';
 import LoginScreen from './Screens/Login';
-import SettingsScreen from './Screens/Settings';
 import ModalScreen from './Screens/Modal';
-import {Provider} from 'react-redux';
+import SettingsScreen from './Screens/Settings';
 import configureStore from './store';
-import * as navigationService from './navigationService';
+import * as navigationService from './services/navigationService';
 
 const Tab = createBottomTabNavigator();
 
@@ -61,6 +62,7 @@ const MainStack = () => {
           },
         }}>
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Signin" component={SigninScreen} />
         <Stack.Screen
           name="HomeTabNavigator"
           component={HomeTabs}

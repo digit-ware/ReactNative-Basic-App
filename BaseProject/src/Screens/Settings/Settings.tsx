@@ -10,21 +10,16 @@
 
 import React, {useCallback} from 'react';
 import {Button, SafeAreaView, ScrollView, StatusBar, View} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 import {statusBar, styles} from './styles';
+import * as appActions from '../../store/app/actions';
 
-interface Props {
-  navigation: any;
-}
-
-export const SettingsScreen = ({navigation}: Props) => {
+export const SettingsScreen = () => {
+  const dispatch = useDispatch();
   const logout = useCallback(() => {
-    // ref actions -> https://reactnavigation.org/docs/navigation-prop/
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'Login'}],
-    });
-  }, [navigation]);
+    dispatch(appActions.logoutRequested());
+  }, [dispatch]);
   return (
     <SafeAreaView style={styles.backgroundStyle}>
       <StatusBar

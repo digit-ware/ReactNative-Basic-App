@@ -1,6 +1,6 @@
+import React, {useEffect} from 'react';
 import {yupResolver} from '@hookform/resolvers/yup';
-import CheckBox from '@react-native-community/checkbox';
-import React, {useCallback, useEffect} from 'react';
+import {useForm, Controller} from 'react-hook-form';
 import {
   Button,
   SafeAreaView,
@@ -10,36 +10,29 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {useForm, Controller} from 'react-hook-form';
+import {useDispatch, useSelector} from 'react-redux';
 import * as yup from 'yup';
 
-import {Header} from 'react-native/Libraries/NewAppScreen';
-
 import {statusBar, styles} from './styles';
-import {useDispatch, useSelector} from 'react-redux';
+import Title from '../../components/base';
 import * as appActions from '../../store/app/actions';
 import * as appSelector from '../../store/app/selectors';
-import {RememberMe, UserLoginRequest} from '../../store/app/types';
-import {navigate} from '../../services/navigationService';
-
-type FormShape = UserLoginRequest & RememberMe;
+import {UserSigninRequest} from '../../store/app/types';
 
 const validationSchema = yup.object().shape({
   username: yup.string().required('Required field'),
   password: yup.string().min(8, 'At least 8 characters').required('Required'),
-  rememberMe: yup.boolean().required(),
 });
 
-export const LoginScreen = () => {
+export const SigninScreen = () => {
   const dispatch = useDispatch();
   const lastError = useSelector(appSelector.lastErrorSelector);
 
-  const useFormValue = useForm<FormShape>({
+  const useFormValue = useForm<UserSigninRequest>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       username: '',
       password: '',
-      rememberMe: false,
     },
   });
 
@@ -56,14 +49,10 @@ export const LoginScreen = () => {
     }
   }, [setError, lastError]);
 
-  const onSubmit = (data: FormShape) => {
-    const {rememberMe, ...loginRequestedData} = data;
-    dispatch(appActions.loginRequested(loginRequestedData, {rememberMe}));
+  const onSubmit = (data: UserSigninRequest) => {
+    dispatch(appActions.signinRequested(data));
   };
   const handleFormSubmit = handleSubmit(onSubmit);
-  const handleSignin = useCallback(() => {
-    navigate('Signin');
-  }, []);
 
   console.log('errors', errors);
 
@@ -75,10 +64,10 @@ export const LoginScreen = () => {
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={styles.backgroundStyle}>
-        <Header />
+        style={styles.scrollView}>
         <View style={styles.body}>
           <View>
+            <Title>Registrati</Title>
             <Controller
               control={control}
               rules={{
@@ -122,30 +111,7 @@ export const LoginScreen = () => {
             <Text>{errors.password?.message}</Text>
             <View style={styles.spacer} />
 
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-                minLength: 8,
-              }}
-              render={({field: {onChange, value}}) => (
-                <View style={[styles.inputContainer, styles.rowStretched]}>
-                  <Text style={styles.inputLabel}>Remember me:</Text>
-                  <CheckBox
-                    boxType="square"
-                    value={value}
-                    onValueChange={onChange}
-                  />
-                </View>
-              )}
-              name="rememberMe"
-            />
-            <Text>{errors.password?.message}</Text>
-            <View style={styles.spacer} />
-
-            <Button title="Submit" onPress={handleFormSubmit} />
-            <View style={styles.hr} />
-            <Button title="Signin" onPress={handleSignin} />
+            <Button title="Singn Submit" onPress={handleFormSubmit} />
           </View>
         </View>
       </ScrollView>
