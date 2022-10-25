@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   LayoutChangeEvent,
@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import WebView from 'react-native-webview';
+import WebView, {WebViewMessageEvent} from 'react-native-webview';
 import templateFile from './template';
 import {styles} from './styles';
 
@@ -21,6 +21,7 @@ interface Props {
 }
 
 export const _Chart = ({style, data}: Props) => {
+  const [webviewLoaded, setWebviewLoaded] = useState(false);
   // pass data way 2 (step A)
   const webviewRef = useRef<WebView>(null);
 
@@ -28,18 +29,25 @@ export const _Chart = ({style, data}: Props) => {
     console.log(event.nativeEvent.layout.width);
   }, []);
 
+  const handleMessage = useCallback((event: WebViewMessageEvent) => {
+    const action = JSON.parse(event.nativeEvent.data);
+    console.log('handleMessage', action.type);
+    if (action.type === 'DOCUMENT_LOAD') {
+      setWebviewLoaded(true);
+    }
+  }, []);
+
   // pass data way 2 (step C)
   useEffect(() => {
     // normal way
-    if (webviewRef.current) {
-      webviewRef.current.postMessage(
-        JSON.stringify({
-          type: 'ADD_DATA',
-          payload: JSON.stringify(data),
-        }),
-      );
+    if (webviewRef.current && webviewLoaded) {
+      const theJSON = JSON.stringify(data);
+      const run = `
+renderChart(${theJSON});
+true; // note: this is required, or you'll sometimes get silent failures
+`;
+      webviewRef.current.injectJavaScript(run);
     }
-
     // big data in chunks
     // (async () => {
     //   if (webviewRef.current) {
@@ -60,7 +68,7 @@ export const _Chart = ({style, data}: Props) => {
     //     );
     //   }
     // })();
-  }, [data]);
+  }, [data, webviewLoaded]);
 
   return (
     <View style={[styles.root, style]} onLayout={handleLayout}>
@@ -81,7 +89,7 @@ export const _Chart = ({style, data}: Props) => {
         source={{
           html: templateFile,
         }}
-        // onMessage={(/* event: WebViewMessageEvent */) => {}}
+        onMessage={handleMessage}
       />
     </View>
   );

@@ -1,8 +1,20 @@
-export default `
 <!DOCTYPE html>
 <html>
 <head>
 <script>
+
+window.onmessage = function getMessage(message) {
+	const action = JSON.parse(message.data);
+	console.log('received action with type ' + action.type);
+	console.log(action.payload)
+	switch (action.type) {
+		case 'ADD_DATA':
+			renderChart(action.payload);
+			break;
+	}
+}
+
+
 function renderChart(dataValues) {
 	var chart = new CanvasJS.Chart("chartContainer", {
 		exportEnabled: true,
@@ -44,7 +56,7 @@ function renderChart(dataValues) {
 			name: "Oil Filter",
 			showInLegend: true,      
 			yValueFormatString: "#,##0.# Units",
-			dataPoints: dataValues
+			dataPoints: valueData
 		}]
 	});
 	chart.render();
@@ -61,15 +73,14 @@ function renderChart(dataValues) {
 
 
 function documentLoad() {
-	window.ReactNativeWebView.postMessage(JSON.stringify({
+	window.postMessage(JSON.stringify({
 		type: 'DOCUMENT_LOAD',
 	}))
-}
+};
 </script>
 </head>
-<body onLoad="documentLoad();" style="height: 100%; width: 100%; background-color: #F0F0F0">
+<body onLoad="documentLoad();">
 <div id="chartContainer" style="height: 300px; width: 100%;"></div>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </body>
 </html>
-`;
