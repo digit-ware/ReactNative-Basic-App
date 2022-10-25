@@ -1,5 +1,14 @@
 apply plugin: "com.android.application"
 
+// .env config file from project root
+project.ext.envConfigFiles = [
+    debug: ".env.debug",
+    staging: ".env.staging",
+    release: ".env.release",
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
+
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -136,6 +145,8 @@ android {
 
     defaultConfig {
         applicationId "com.baseproject"
+        // fix the package name (that can be different from the applicationId)
+        resValue "string", "build_config_package", "com.mobileapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -217,15 +228,52 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        staging {
+            file("../signing_staging.properties").with { propFile ->
+                if (propFile.canRead()) {
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propFile))
+
+                    storeFile file(properties['keystorePath'])
+                    storePassword properties['keystorePassword']
+                    keyAlias properties['keyAlias']
+                    keyPassword properties['keyPassword']
+                } else {
+                    println 'Unable to read signing_staging.properties'
+                }
+            }
+        }
+        release {
+            file("../signing_release.properties").with { propFile ->
+                if (propFile.canRead()) {
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propFile))
+
+                    storeFile file(properties['keystorePath'])
+                    storePassword properties['keystorePassword']
+                    keyAlias properties['keyAlias']
+                    keyPassword properties['keyPassword']
+                } else {
+                    println 'Unable to read signing_release.properties'
+                }
+            }
+        }
     }
     buildTypes {
         debug {
+            applicationIdSuffix ".debug"
             signingConfig signingConfigs.debug
         }
+        staging {
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.staging
+            matchingFallbacks = ['release']
+        }
         release {
+            // applicationIdSuffix ".prod"
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
