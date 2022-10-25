@@ -22,6 +22,7 @@ export interface NotificationData {
 
 let messageOpenedApp: FirebaseMessagingTypes.RemoteMessage = null;
 
+// step 1
 export async function requestUserPermission() {
   const authStatus = await firebase.messaging().requestPermission();
   const enabled =

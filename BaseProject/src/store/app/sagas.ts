@@ -87,7 +87,9 @@ export function* bootstrap() {
       },
     );
     if (userLoginStoredInfo) {
-      navigationService.navigate('HomeTabNavigator');
+      navigationService.navigate('HomeTabNavigator', {
+        screen: 'Charts',
+      });
 
       const contatori: Array<Contatore> | null = yield call(async () => {
         const jsonResult = await AsyncStorage.getItem(CONTATORI_KEY);
