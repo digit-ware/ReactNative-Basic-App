@@ -9,6 +9,7 @@ interface Props extends TextProps {
 }
 
 export const _FilterChart = ({style}: Props) => {
+  console.log('_FilterChart render');
   const [menuOpened, setMenuOpened] = useState(false);
   // NOTE: useMemo needed to avoid changes on nimated.Value
   // otherwise the animation would have unattended behaviour
@@ -41,8 +42,8 @@ export const _FilterChart = ({style}: Props) => {
   const bodyAnimatedHeight = useMemo(
     () => ({
       height: animatedMenuValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, animatedBodyHeight],
+        inputRange: [0, 0.1, 1],
+        outputRange: [0, animatedBodyHeight / 2, animatedBodyHeight],
       }),
     }),
     [animatedMenuValue],

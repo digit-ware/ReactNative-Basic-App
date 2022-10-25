@@ -4,6 +4,7 @@ import {SafeAreaView, StatusBar, View} from 'react-native';
 import {statusBar, styles} from './styles';
 import Title from '../../components/base/Title';
 import FilterChart from '../../components/FilterChart';
+import Chart from '../../components/Chart';
 // import * as chartsActions from '../../store/charts/actions';
 // import * as chartsSelector from '../../store/charts/selectors';
 
@@ -17,6 +18,7 @@ export const ChartsScreen = () => {
       <FilterChart style={styles.paddedHorizontal}/>
       <View style={styles.body}>
         <Title>I tuoi consumi</Title>
+        <Chart />
       </View>
     </SafeAreaView>
   );
