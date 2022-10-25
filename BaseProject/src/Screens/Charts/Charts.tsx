@@ -15,10 +15,18 @@ export const ChartsScreen = () => {
         barStyle={statusBar.barStyle}
         backgroundColor={statusBar.backgroundColor}
       />
-      <FilterChart style={styles.paddedHorizontal}/>
+      <FilterChart style={styles.paddedHorizontal} />
       <View style={styles.body}>
         <Title>I tuoi consumi</Title>
-        <Chart />
+        <Chart
+          data={[
+            {label: 'New Jersey', y: 19034.5},
+            {label: 'Texas', y: 20015},
+            {label: 'Oregon', y: 25342},
+            {label: 'Montana', y: 20088},
+            {label: 'Massachusetts', y: 28234},
+          ]}
+        />
       </View>
     </SafeAreaView>
   );
