@@ -8,13 +8,13 @@
  * @format
  */
 
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {Text} from 'react-native';
-import {Provider} from 'react-redux';
-import {SigninScreen} from './Screens/Signin/Signin';
+import { Text } from 'react-native';
+import { Provider } from 'react-redux';
+import { SigninScreen } from './Screens/Signin/Signin';
 import ChartsScreen from './Screens/Charts';
 import HomeScreen from './Screens/Home';
 import LoginScreen from './Screens/Login';
@@ -23,16 +23,26 @@ import SettingsScreen from './Screens/Settings';
 import configureStore from './store';
 import * as navigationService from './services/navigationService';
 
+import {
+  ColorMode,
+  extendTheme,
+  NativeBaseProvider,
+  useColorModeValue,
+} from 'native-base';
+import type { StorageManager } from 'native-base';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import customTheme from './theme/custom';
+
 const Tab = createBottomTabNavigator();
 
 function HomeTabs() {
   return (
-    <Tab.Navigator screenOptions={{unmountOnBlur: true}}>
+    <Tab.Navigator screenOptions={{ unmountOnBlur: true }}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({focused, color, size}) => {
+          tabBarIcon: ({ focused, color, size }) => {
             return (
               <Text
                 style={{
@@ -50,7 +60,7 @@ function HomeTabs() {
         name="Chart"
         component={ChartsScreen}
         options={{
-          tabBarIcon: ({focused, color, size}) => {
+          tabBarIcon: ({ focused, color, size }) => {
             return (
               <Text
                 style={{
@@ -68,7 +78,10 @@ function HomeTabs() {
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({focused, color, size}) => {
+          headerStyle: {
+            backgroundColor: useColorModeValue('#fff', '#000'),
+          },
+          tabBarIcon: ({ focused, color, size }) => {
             return (
               <Text
                 style={{
@@ -117,11 +130,35 @@ const MainStack = () => {
 const store = configureStore();
 
 const App = () => {
+  const theme = extendTheme(customTheme);
+
+  const colorModeManager: StorageManager = {
+    get: async () => {
+      try {
+        let val = await AsyncStorage.getItem('@my-app-color-mode');
+        return val === 'dark' ? 'dark' : 'light';
+      } catch (e) {
+        console.log(e);
+        return 'light';
+      }
+    },
+    set: async (value: ColorMode) => {
+      try {
+        await AsyncStorage.setItem('@my-app-color-mode', value);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+  };
+
   return (
     <Provider store={store}>
-      <NavigationContainer ref={navigator => navigationService.init(navigator)}>
-        <MainStack />
-      </NavigationContainer>
+      <NativeBaseProvider theme={theme} colorModeManager={colorModeManager}>
+        <NavigationContainer
+          ref={navigator => navigationService.init(navigator)}>
+          <MainStack />
+        </NavigationContainer>
+      </NativeBaseProvider>
     </Provider>
   );
 };

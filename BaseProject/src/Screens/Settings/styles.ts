@@ -1,5 +1,5 @@
-import {StatusBarStyle, StyleSheet, ViewStyle} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { StatusBarStyle, StyleSheet, ViewStyle } from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 export const statusBar = {
   barStyle: 'dark-content' as StatusBarStyle,
@@ -8,9 +8,6 @@ export const statusBar = {
 
 export const styles = StyleSheet.create({
   backgroundStyle: {
-    backgroundColor: Colors.lighter,
-  } as ViewStyle,
-  body: {
-    backgroundColor: '#FFFFFF',
+    flex: 1,
   } as ViewStyle,
 });
