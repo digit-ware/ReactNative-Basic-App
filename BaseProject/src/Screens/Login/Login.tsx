@@ -1,8 +1,7 @@
-import {yupResolver} from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import CheckBox from '@react-native-community/checkbox';
-import React, {useCallback, useEffect} from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
-  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -10,17 +9,19 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {useForm, Controller} from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 
-import {Header} from 'react-native/Libraries/NewAppScreen';
+import { Header } from 'react-native/Libraries/NewAppScreen';
 
-import {statusBar, styles} from './styles';
-import {useDispatch, useSelector} from 'react-redux';
+import { statusBar, styles } from './styles';
+import { useDispatch, useSelector } from 'react-redux';
 import * as appActions from '../../store/app/actions';
 import * as appSelector from '../../store/app/selectors';
-import {RememberMe, UserLoginRequest} from '../../store/app/types';
-import {navigate} from '../../services/navigationService';
+import { RememberMe, UserLoginRequest } from '../../store/app/types';
+import { navigate } from '../../services/navigationService';
+
+import { Button, Input } from 'native-base';
 
 type FormShape = UserLoginRequest & RememberMe;
 
@@ -46,7 +47,7 @@ export const LoginScreen = () => {
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     setError,
   } = useFormValue;
 
@@ -57,8 +58,8 @@ export const LoginScreen = () => {
   }, [setError, lastError]);
 
   const onSubmit = (data: FormShape) => {
-    const {rememberMe, ...loginRequestedData} = data;
-    dispatch(appActions.loginRequested(loginRequestedData, {rememberMe}));
+    const { rememberMe, ...loginRequestedData } = data;
+    dispatch(appActions.loginRequested(loginRequestedData, { rememberMe }));
   };
   const handleFormSubmit = handleSubmit(onSubmit);
   const handleSignin = useCallback(() => {
@@ -84,16 +85,16 @@ export const LoginScreen = () => {
               rules={{
                 required: true,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>Username:</Text>
-                  <TextInput
-                    style={styles.inputText}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                </View>
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  size={5}
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  type="text"
+                  variant="underlined"
+                  placeholder="Username"
+                />
               )}
               name="username"
             />
@@ -104,18 +105,18 @@ export const LoginScreen = () => {
               control={control}
               rules={{
                 required: true,
-                minLength: 8,
+                minLength: 3,
               }}
-              render={({field: {onChange, onBlur, value}}) => (
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>Password:</Text>
-                  <TextInput
-                    style={styles.inputText}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                </View>
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  size={5}
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  type="password"
+                  variant="underlined"
+                  placeholder="Password"
+                />
               )}
               name="password"
             />
@@ -126,16 +127,15 @@ export const LoginScreen = () => {
               control={control}
               rules={{
                 required: true,
-                minLength: 8,
+                minLength: 3,
               }}
-              render={({field: {onChange, value}}) => (
+              render={({ field: { onChange, value } }) => (
                 <View style={[styles.inputContainer, styles.rowStretched]}>
                   <Text style={styles.inputLabel}>Remember me:</Text>
                   <CheckBox
                     boxType="square"
                     value={value}
-                    onValueChange={onChange}
-                  />
+                    onValueChange={onChange} />
                 </View>
               )}
               name="rememberMe"
@@ -143,9 +143,12 @@ export const LoginScreen = () => {
             <Text>{errors.password?.message}</Text>
             <View style={styles.spacer} />
 
-            <Button title="Submit" onPress={handleFormSubmit} />
-            <View style={styles.hr} />
-            <Button title="Signin" onPress={handleSignin} />
+            <Button mt={30} onPress={handleFormSubmit}>
+              Submit
+            </Button>
+            <Button mt={4} colorScheme="secondary" onPress={handleSignin}>
+              Signin
+            </Button>
           </View>
         </View>
       </ScrollView>
