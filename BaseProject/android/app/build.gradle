@@ -1,7 +1,16 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 
+// .env config file from project root
+project.ext.envConfigFiles = [
+    debug: ".env.debug",
+    staging: ".env.staging",
+    release: ".env.release",
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 import com.android.build.OutputFile
+import org.apache.tools.ant.taskdefs.condition.Os
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -117,15 +126,52 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        staging {
+            file("../signing_staging.properties").with { propFile ->
+                if (propFile.canRead()) {
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propFile))
+
+                    storeFile file(properties['keystorePath'])
+                    storePassword properties['keystorePassword']
+                    keyAlias properties['keyAlias']
+                    keyPassword properties['keyPassword']
+                } else {
+                    println 'Unable to read signing_staging.properties'
+                }
+            }
+        }
+        release {
+            file("../signing_release.properties").with { propFile ->
+                if (propFile.canRead()) {
+                    def properties = new Properties()
+                    properties.load(new FileInputStream(propFile))
+
+                    storeFile file(properties['keystorePath'])
+                    storePassword properties['keystorePassword']
+                    keyAlias properties['keyAlias']
+                    keyPassword properties['keyPassword']
+                } else {
+                    println 'Unable to read signing_release.properties'
+                }
+            }
+        }
     }
     buildTypes {
         debug {
+            applicationIdSuffix ".debug"
             signingConfig signingConfigs.debug
         }
+        staging {
+            applicationIdSuffix ".staging"
+            signingConfig signingConfigs.staging
+            matchingFallbacks = ['release']
+        }
         release {
+            // applicationIdSuffix ".prod"
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
@@ -165,6 +211,13 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+}
+
+// Run this once to be able to run the application with BUCK
+// puts all compile dependencies into folder libs for BUCK to use
+task copyDownloadableDepsToLibs(type: Copy) {
+    from configurations.implementation
+    into 'libs'
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
